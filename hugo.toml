@@ -28,10 +28,6 @@ lastmod = ["lastmod", ":git", "date", "publishDate"]
 publishDate = ["publishDate", "date"]
 expiryDate = ["expiryDate"]
 
-
-[params.author]
-  about = "about.md"
-
 [blackfriday]
   # hrefTargetBlank = true
   # noreferrerLinks = true
@@ -39,8 +35,6 @@ expiryDate = ["expiryDate"]
 
 [taxonomies]
   tag = "tags"
-  # Categories are disabled by default.
-  # category = "categories"
 
 # Enable to get proper Mathjax support
 #[markup]
@@ -54,10 +48,10 @@ expiryDate = ["expiryDate"]
 
 
 [params]
-  # description = "CHANGE ME SITE DESCRIPTION"
+  # description = "A little conrner of the internet I ahve made"
   # images = [""]
-  themeColor = "#494f5c"
-  accentColor = "#018472"
+    themeColor = "#282828"
+    accentColor = "#458588"
 
   #homeSubtitle = "CHANGE ME HOME SUBTITLE"
   footerCopyright = "luper"
