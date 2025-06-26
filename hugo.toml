@@ -50,8 +50,6 @@ expiryDate = ["expiryDate"]
 [params]
   # description = "A little conrner of the internet I ahve made"
   # images = [""]
-    themeColor = "#282828"
-    accentColor = "#458588"
 
   #homeSubtitle = "CHANGE ME HOME SUBTITLE"
   footerCopyright = "luper"
@@ -109,11 +107,12 @@ expiryDate = ["expiryDate"]
 [menu]
 
   [[menu.main]]
-    name = "Posts"
-    url = "posts/"
+    name = "About"
+    url = "about/"
     weight = 10
 
   [[menu.main]]
-    name = "About"
-    url = "about/"
+    name = "Posts"
+    url = "posts/"
     weight = 20
+
