@@ -1,0 +1,23 @@
+### terraform ###
+terraform/.terraform/
+*.tfstate
+*.tfstate.*
+terraform/crash.log
+terraform/crash.*.log
+*.tfvars.json
+terraform/override.tf
+terraform/override.tf.json
+*_override.tf
+*_override.tf.json
+terraform/.terraform.tfstate.lock.info
+terraform/.terraformrc
+terraform/terraform.rc
+
+### Hugo ###
+# Generated files by hugo
+/public/
+/resources/_gen/
+hugo.exe
+hugo.darwin
+hugo.linux
+/.hugo_build.lock
