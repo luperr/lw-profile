@@ -1,0 +1,4 @@
+##TODO
+ We want to build and run the terraform here?  check for drift if none persit?
+
+ Also might want to add the CF to do dynamic allocation of the IP's here https://tuxcorp.com/s3-cloudflare/ instead of in lambda and have it push the IAM from here......
