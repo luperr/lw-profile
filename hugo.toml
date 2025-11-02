@@ -41,7 +41,7 @@ expiryDate = ["expiryDate"]
 #          inline = [['\(', '\)']]
 
 [params]
-  description = "A little conrner of the internet just for my stuff"
+  description = "A little corner of the internet just for my stuff"
   footerCopyright = "luper"
   footerHideThemeName = true
   justifyContent = false
@@ -73,7 +73,7 @@ expiryDate = ["expiryDate"]
 
     [[params.socialLinks]]
     name = "linkedin"
-    url = "www.linkedin.com/in/lwhitehill-884788247"
+    url = "https://www.linkedin.com/in/lwhitehill-884788247"
 
 [menu]
   [[menu.main]]
