@@ -2,39 +2,123 @@ name: Build and deploy Hugo site to s3
 
 on:
   push:
-    branches-ignore:
-      - main
+    branches:
+      - main  # Deploy on push to main (production)
   pull_request:
     branches:
-      - main
-    types: [closed]
+      - main  # Build/test on PRs to main (no deploy)
+    types: [opened, synchronize, reopened]
+
+env:
+  HUGO_VERSION: '0.152.2'
 
 jobs:
-  deploy:
-    runs-on: ubuntu-22.04
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+  build:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          submodules: true  # Fetch Hugo themes (true OR recursive)
+          submodules: true  # Fetch Hugo themes
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: 'latest'
+          hugo-version: ${{ env.HUGO_VERSION }}
           extended: true
 
-      - name: Build
-        run: hugo --minify
+      - name: Validate Hugo config
+        run: hugo config | head -20  # Quick config validation
 
-      - name: Deploy
+      - name: Check Hugo
+        run: hugo check || echo "Hugo check completed with warnings"
+
+      - name: Determine environment
+        id: env
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+            echo "base_url=https://lachlannwhitehill.com" >> $GITHUB_OUTPUT
+            echo "deny_robots=" >> $GITHUB_OUTPUT
+          else
+            echo "environment=development" >> $GITHUB_OUTPUT
+            echo "base_url=https://dev.lachlannwhitehill.com" >> $GITHUB_OUTPUT
+            echo "deny_robots=noindex, nofollow, noarchive" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build site
+        run: hugo --environment ${{ steps.env.outputs.environment }} --baseURL "${{ steps.env.outputs.base_url }}" --minify --verbose
+        env:
+          HUGO_ENV: ${{ steps.env.outputs.environment }}
+
+      - name: Check build output
+        run: |
+          if [ ! -d "public" ]; then
+            echo "Error: public directory not created"
+            exit 1
+          fi
+          if [ ! -f "public/index.html" ]; then
+            echo "Error: index.html not found"
+            exit 1
+          fi
+          echo "Build successful: $(du -sh public | cut -f1) generated"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugo-site
+          path: public/
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    # Deploy to prod on push to main (via PR merge due to branch protection), or to dev on push to develop
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ${{ secrets.S3_BUCKET_REGION }}
+    concurrency:
+      group: ${{ github.workflow }}-deploy
+      cancel-in-progress: false
+    steps:
+      - name: Determine environment
+        id: env
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+            echo "base_url=https://lachlannwhitehill.com" >> $GITHUB_OUTPUT
+            echo "s3_bucket=${{ secrets.S3_BUCKET_PROD }}" >> $GITHUB_OUTPUT
+          else
+            echo "environment=development" >> $GITHUB_OUTPUT
+            echo "base_url=https://dev.lachlannwhitehill.com" >> $GITHUB_OUTPUT
+            echo "s3_bucket=${{ secrets.S3_BUCKET_DEV }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: hugo-site
+          path: public/
+
+      - name: Deploy to S3
         uses: reggionick/s3-deploy@v4
         with:
           folder: public
-          bucket: ${{ secrets.S3_BUCKET }}
+          bucket: ${{ steps.env.outputs.s3_bucket }}
           bucket-region: ${{ secrets.S3_BUCKET_REGION }}
+          delete-removed: true
+          cache-control: 'public, max-age=31536000, immutable'
+          file-exclude: '*.html,*.xml,*.json'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Deployment summary
+        run: |
+          echo "Environment: ${{ steps.env.outputs.environment }}"
+          echo "Site URL: ${{ steps.env.outputs.base_url }}"
+          echo "S3 Bucket: ${{ steps.env.outputs.s3_bucket }}"
+          echo "Deployment complete!"
