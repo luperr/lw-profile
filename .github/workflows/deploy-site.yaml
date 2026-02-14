@@ -3,7 +3,8 @@ name: Build and deploy Hugo site to s3
 on:
   push:
     branches:
-      - main  # Deploy on push to main (production)
+      - main     # Deploy to production (via PR merge)
+      - develop  # Deploy to development
   pull_request:
     branches:
       - main  # Build/test on PRs to main (no deploy)
