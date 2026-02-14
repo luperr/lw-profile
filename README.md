@@ -9,10 +9,9 @@ This is a static site generator project using:
 - **Hermit-v2 Theme** - Blog theme for Hugo
 - **AWS S3** - Static website hosting
 - **Terraform** - Infrastructure as Code for AWS resources
-- **Docker** - Containerized development environment
 - **GitHub Actions** - CI/CD for automated deployment
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -32,20 +31,7 @@ docker run -p 1313:1313 --name lw-profile-hugo lw-profile
 # Access at http://localhost:1313
 ```
 
-### Running Locally without Docker
-
-```bash
-# Install Hugo Extended
-brew install hugo
-
-# Run development server
-hugo server
-
-# Build for production
-hugo --environment production --minify
-```
-
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 lw-profile/
@@ -63,107 +49,33 @@ lw-profile/
 └── themes/hermit-v2/     # Hugo theme
 ```
 
-## 🛠️ Development
-
-### Content Management
-
-- **Create new post**: `hugo new posts/my-new-post.md`
-- **Edit content**: Modify markdown files in `content/`
-- **Preview**: Hugo auto-reloads on file changes
-
-### Styling
-
-Custom SCSS variables are in `assets/scss/_colors.scss`. These override theme defaults.
-
-### Infrastructure
-
-```bash
-# Navigate to terraform directory
-cd terraform
-
-# Initialize Terraform
-terraform init
-
-# Plan changes
-terraform plan
-
-# Apply changes
-terraform apply
-```
-
-## 📦 Deployment
-
-### Automated (GitHub Actions)
+### Automated Deployment (GitHub Actions)
 
 The site automatically deploys when:
 - A PR to `main` is merged (production)
 - Pushes to non-main branches (staging)
 
-### Manual Deployment
 
-```bash
-# Build the site
-hugo --environment production --minify
+CRITICAL PATH TO LIVE SITE
+--------------------------
+[ ] Get domain name ready
+[ ] Update hugo.toml baseURL (line 1) to production domain
+[ ] Fix robots.txt blocking (hugo.toml line 55 - remove denyRobots)
+[ ] Update S3 bucket policy to allow Cloudflare IPs or public access
+[ ] Add public access block settings to prod terraform module
+[ ] Run terraform apply
+[ ] Configure GitHub Actions secrets (AWS credentials, S3 bucket)
+[ ] Test deployment to dev
+[ ] Configure Cloudflare DNS CNAME to S3 endpoint
+[ ] Enable Cloudflare proxy (orange cloud)
+[ ] Set Cloudflare SSL to "Full"
+[ ] Deploy to production (merge to main)
+[ ] Verify site is live
 
-# Deploy to S3 (example)
-aws s3 sync public/ s3://your-bucket-name --delete
-```
-
-## 🔧 Configuration
-
-### Hugo Configuration
-
-Main config: `hugo.toml`
-- Base URL (currently needs production URL)
-- Theme settings
-- Language configuration
-- SEO settings
-
-### Terraform Configuration
-
-- **Region**: `ap-southeast-4`
-- **Environments**: `dev` and `prod`
-- **Buckets**: `dev-lw-profile` and `prod-lw-profile`
-
-### Environment Variables
-
-For Terraform:
-- `AWS_PROFILE=admin-prod` (or use AWS credentials)
-
-For Hugo production builds:
-- Set `HUGO_ENV=production` or use `--environment production`
-
-## 📝 TODO / Known Issues
-
-### 🔴 Critical Priority
-
-- [ ] **Fix Hugo baseURL** - Currently set to `localhost`, breaks production builds and SEO
-- [ ] **Fix Terraform bucket policy** - Add public `GetObject` access so website is actually viewable
-- [ ] **Fix GitHub Actions workflow** - Use production environment and add validation
-
-### 🟡 High Priority
-
-- [ ] **Fix critical typos** - 'conrner' → 'corner' and LinkedIn URL missing `https://`
-- [ ] **Configure denyRobots for production** - Currently blocking all search engines (should be dev-only)
-- [ ] **Add Terraform encryption** - Add S3 bucket encryption configuration
-- [ ] **Fix prod module settings** - Add missing public access block settings for production
-
-### 🟢 Medium Priority
-
-- [ ] **Create production config structure** - Set up environment-based Hugo config (`config/` directory)
-- [ ] **Improve archetype template** - Add more useful frontmatter fields
-- [ ] **Fix content typos** - Update `about.md` and test post content
-- [ ] **Standardize frontmatter format** - Consistent YAML vs TOML usage
-- [ ] **Add meta tags** - Improve SEO with proper Open Graph and Twitter Card tags
-- [ ] **Complete multi-language setup** - Configure French and Italian languages properly
-
-
-## 📚 Documentation
-
-- [Hugo Documentation](https://gohugo.io/documentation/)
-- [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-- [GitHub Actions Hugo Setup](https://github.com/peaceiris/actions-hugo)
-
-
-**Note**: This project is in active development. See TODO section above for known issues and planned improvements.
-
+OPTIONAL
+--------
+[ ] Add real content to about.md
+[ ] Create blog posts
+[ ] Add Cloudflare page rules for caching
+[ ] Implement Lambda for Cloudflare IP auto-updates
+[ ] Add encryption to S3 buckets
