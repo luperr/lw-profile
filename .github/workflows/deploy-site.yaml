@@ -48,7 +48,7 @@ jobs:
           fi
 
       - name: Build site
-        run: hugo --environment ${{ steps.env.outputs.environment }} --baseURL "${{ steps.env.outputs.base_url }}" --minify --verbose
+        run: hugo --environment ${{ steps.env.outputs.environment }} --baseURL "${{ steps.env.outputs.base_url }}" --minify
         env:
           HUGO_ENV: ${{ steps.env.outputs.environment }}
 
