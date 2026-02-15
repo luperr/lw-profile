@@ -1,6 +1,6 @@
 baseURL = "https://lachlannwhitehill.com"
 defaultContentLanguage = "en"
-defaultContentLanguageInSubdir = true
+defaultContentLanguageInSubdir = false
 theme = "hermit-v2"
 enableRobotsTXT = true
 
