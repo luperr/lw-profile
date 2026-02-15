@@ -58,13 +58,15 @@ The site automatically deploys when:
 
 CRITICAL PATH TO LIVE SITE
 --------------------------
-[ ] Get domain name ready
-[ ] Update hugo.toml baseURL (line 1) to production domain
-[ ] Fix robots.txt blocking (hugo.toml line 55 - remove denyRobots)
+[x] Get domain name ready (lachlannwhitehill.com)
+[x] Update hugo.toml baseURL to production domain
+[x] Fix robots.txt blocking in hugo.toml
+[x] Update GitHub Actions workflow for OIDC and branch-based deployment
+[ ] Setup AWS OIDC provider and IAM role in Terraform
 [ ] Update S3 bucket policy to allow Cloudflare IPs or public access
 [ ] Add public access block settings to prod terraform module
-[ ] Run terraform apply
-[ ] Configure GitHub Actions secrets (AWS credentials, S3 bucket)
+[ ] Run terraform apply to create infrastructure
+[ ] Configure GitHub Actions secrets (AWS_ROLE_ARN, AWS_REGION, S3 buckets)
 [ ] Test deployment to dev
 [ ] Configure Cloudflare DNS CNAME to S3 endpoint
 [ ] Enable Cloudflare proxy (orange cloud)
