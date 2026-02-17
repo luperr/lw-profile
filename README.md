@@ -11,14 +11,6 @@ This is a static site generator project using:
 - **Terraform** - Infrastructure as Code for AWS resources
 - **GitHub Actions** - CI/CD for automated deployment
 
-## Quick Start
-
-### Prerequisites
-
-- Docker Desktop (for macOS)
-- Terraform (if running locally)
-- Hugo Extended (if running locally)
-
 ### Running Locally with Docker
 
 ```bash
