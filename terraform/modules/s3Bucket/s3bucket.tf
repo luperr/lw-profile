@@ -21,37 +21,30 @@ resource "aws_s3_bucket_acl" "s3BucketAcl" {
   acl    = var.s3BucketAcl
 }
 
-data "aws_caller_identity" "current" {}
+data "aws_iam_policy_document" "cloudflare_access" {
+  statement {
+    sid     = "AllowCloudflareGetObject"
+    effect  = "Allow"
+    actions = ["s3:GetObject"]
 
-locals {
-    account_id = data.aws_caller_identity.current.account_id
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    resources = ["${aws_s3_bucket.s3Bucket.arn}/*"]
+
+    condition {
+      test     = "IpAddress"
+      variable = "aws:SourceIp"
+      values   = var.cloudflare_ips
+    }
+  }
 }
 
 resource "aws_s3_bucket_policy" "s3BucketPolicy" {
   bucket = aws_s3_bucket.s3Bucket.id
-
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Id": "Allow get and put objects",
-  "Statement": [
-    {
-      "Sid": "Allow get and put objects",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS":[
-          "${local.account_id}"
-        ]
-      },
-      "Action": [
-        "s3:GetObject",
-        "s3:PutObject"
-      ],
-      "Resource": "${aws_s3_bucket.s3Bucket.arn}/*"
-    }
-  ]
-}
-POLICY
+  policy = data.aws_iam_policy_document.cloudflare_access.json
 }
 
 

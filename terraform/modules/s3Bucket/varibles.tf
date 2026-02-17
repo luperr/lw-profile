@@ -97,7 +97,7 @@ variable "ignorePublicACLs" {
     condition = contains(["true", "false"], var.ignorePublicACLs)
     error_message = "Valid value is one of the following: true, false"
   }
-} 
+}
 
 variable "restrictPublicBuckets" {
   type = string
@@ -107,4 +107,9 @@ variable "restrictPublicBuckets" {
     condition = contains(["true", "false"], var.restrictPublicBuckets)
     error_message = "Valid value is one of the following: true, false"
   }
+}
+
+variable "cloudflare_ips" {
+  type        = list(string)
+  description = "List of Cloudflare IP ranges allowed to access the bucket"
 }
