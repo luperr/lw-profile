@@ -3,7 +3,8 @@ name: Build and deploy Hugo site to s3
 on:
   push:
     branches:
-      - main  # Deploy on push to main (production)
+      - main     # Deploy to production (via PR merge)
+      - develop  # Deploy to development
   pull_request:
     branches:
       - main  # Build/test on PRs to main (no deploy)
@@ -48,7 +49,7 @@ jobs:
           fi
 
       - name: Build site
-        run: hugo --environment ${{ steps.env.outputs.environment }} --baseURL "${{ steps.env.outputs.base_url }}" --minify --verbose
+        run: hugo --environment ${{ steps.env.outputs.environment }} --baseURL "${{ steps.env.outputs.base_url }}" --minify
         env:
           HUGO_ENV: ${{ steps.env.outputs.environment }}
 
@@ -76,10 +77,9 @@ jobs:
     runs-on: ubuntu-latest
     # Deploy to prod on push to main (via PR merge due to branch protection), or to dev on push to develop
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ secrets.S3_BUCKET_REGION }}
+    permissions:
+      id-token: write   # Required for OIDC
+      contents: read
     concurrency:
       group: ${{ github.workflow }}-deploy
       cancel-in-progress: false
@@ -97,6 +97,24 @@ jobs:
             echo "s3_bucket=${{ secrets.S3_BUCKET_DEV }}" >> $GITHUB_OUTPUT
           fi
 
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Verify AWS access and S3 bucket
+        run: |
+          echo "AWS Identity:"
+          aws sts get-caller-identity
+          echo ""
+          echo "Testing S3 bucket access: ${{ steps.env.outputs.s3_bucket }}"
+          aws s3 ls s3://${{ steps.env.outputs.s3_bucket }} || {
+            echo "ERROR: Cannot access bucket - check IAM permissions"
+            exit 1
+          }
+          echo "S3 bucket accessible"
+
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -108,17 +126,15 @@ jobs:
         with:
           folder: public
           bucket: ${{ steps.env.outputs.s3_bucket }}
-          bucket-region: ${{ secrets.S3_BUCKET_REGION }}
+          bucket-region: ${{ secrets.AWS_REGION }}
           delete-removed: true
           cache-control: 'public, max-age=31536000, immutable'
           file-exclude: '*.html,*.xml,*.json'
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Deployment summary
         run: |
           echo "Environment: ${{ steps.env.outputs.environment }}"
           echo "Site URL: ${{ steps.env.outputs.base_url }}"
           echo "S3 Bucket: ${{ steps.env.outputs.s3_bucket }}"
-          echo "Deployment complete!"
+          echo "Region: ${{ secrets.AWS_REGION }}"
+          echo "Deployment complete"

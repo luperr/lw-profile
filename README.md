@@ -58,19 +58,30 @@ The site automatically deploys when:
 
 CRITICAL PATH TO LIVE SITE
 --------------------------
-[ ] Get domain name ready
-[ ] Update hugo.toml baseURL (line 1) to production domain
-[ ] Fix robots.txt blocking (hugo.toml line 55 - remove denyRobots)
+[x] Get domain name ready (lachlannwhitehill.com)
+[x] Update hugo.toml baseURL to production domain
+[x] Fix robots.txt blocking in hugo.toml
+[x] Update GitHub Actions workflow for OIDC and branch-based deployment
+[ ] Setup AWS OIDC provider and IAM role in Terraform
 [ ] Update S3 bucket policy to allow Cloudflare IPs or public access
 [ ] Add public access block settings to prod terraform module
-[ ] Run terraform apply
-[ ] Configure GitHub Actions secrets (AWS credentials, S3 bucket)
+[ ] Run terraform apply to create infrastructure
+[ ] Configure GitHub Actions secrets (AWS_ROLE_ARN, AWS_REGION, S3 buckets)
 [ ] Test deployment to dev
 [ ] Configure Cloudflare DNS CNAME to S3 endpoint
 [ ] Enable Cloudflare proxy (orange cloud)
 [ ] Set Cloudflare SSL to "Full"
 [ ] Deploy to production (merge to main)
 [ ] Verify site is live
+
+NOTES
+-----
+- S3 bucket names must match the domain name exactly for Cloudflare proxying to work
+  without Workers or header rewrites. e.g.:
+    dev bucket:  dev.lachlannwhitehill.com
+    prod bucket: lachlannwhitehill.com
+- Cloudflare sends the domain as the Host header to S3. S3 uses the Host header
+  to identify the bucket, so names must match.
 
 OPTIONAL
 --------
