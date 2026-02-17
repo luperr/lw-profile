@@ -1,6 +1,6 @@
 # lw-profile
 
-A personal blog/profile website built with Hugo, deployed to AWS S3, and managed with Terraform.
+A personal blog/profile website built with Hugo, deployed to AWS S3, and managed with Terraform. Automatically deployed with GitHub Actions.
 
 ## 📋 Overview
 
