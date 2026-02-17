@@ -1,6 +1,5 @@
 provider "aws" {
   region  = "ap-southeast-4"
-  profile = "admin-prod"
 }
 
 module "s3Dev" {
