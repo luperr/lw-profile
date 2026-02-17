@@ -50,9 +50,6 @@ The site automatically deploys when:
 
 CRITICAL PATH TO LIVE SITE
 --------------------------
-[ ] Create S3 bucket for Terraform state (lw-profile-terraform-state, ap-southeast-4, versioning on)
-[ ] Run terraform init locally to initialise remote backend
-[ ] Add state bucket permissions to IAM role (s3:GetObject, PutObject, DeleteObject, ListBucket)
 [ ] Update S3 bucket policy to allow Cloudflare IPs or public access
 [ ] Add public access block settings to prod terraform module
 [ ] Run terraform apply to create infrastructure
