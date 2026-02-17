@@ -7,7 +7,7 @@ module "s3Dev" {
   source = "./modules/s3Bucket"
 
   env                     = "dev"
-  bucket_name             = "dev-lw-profile"
+  bucket_name             = "dev.lachlannwhitehill.com"
   s3BucketAcl             = "public-read"
   force_destroy           = "true"
   index_document_key      = "index.html"
@@ -24,7 +24,7 @@ module "s3Prod" {
   source = "./modules/s3Bucket"
 
   env                     = "prod"
-  bucket_name             = "prod-lw-profile"
+  bucket_name             = "lachlannwhitehill.com"
   s3BucketAcl             = "public-read"
   force_destroy           = "true"
   index_document_key      = "index.html"
