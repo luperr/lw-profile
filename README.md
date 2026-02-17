@@ -58,19 +58,12 @@ The site automatically deploys when:
 
 CRITICAL PATH TO LIVE SITE
 --------------------------
-[x] Get domain name ready (lachlannwhitehill.com)
-[x] Update hugo.toml baseURL to production domain
-[x] Fix robots.txt blocking in hugo.toml
-[x] Update GitHub Actions workflow for OIDC and branch-based deployment
-[ ] Setup AWS OIDC provider and IAM role in Terraform
+[ ] Create S3 bucket for Terraform state (lw-profile-terraform-state, ap-southeast-4, versioning on)
+[ ] Run terraform init locally to initialise remote backend
+[ ] Add state bucket permissions to IAM role (s3:GetObject, PutObject, DeleteObject, ListBucket)
 [ ] Update S3 bucket policy to allow Cloudflare IPs or public access
 [ ] Add public access block settings to prod terraform module
 [ ] Run terraform apply to create infrastructure
-[ ] Configure GitHub Actions secrets (AWS_ROLE_ARN, AWS_REGION, S3 buckets)
-[ ] Test deployment to dev
-[ ] Configure Cloudflare DNS CNAME to S3 endpoint
-[ ] Enable Cloudflare proxy (orange cloud)
-[ ] Set Cloudflare SSL to "Full"
 [ ] Deploy to production (merge to main)
 [ ] Verify site is live
 
