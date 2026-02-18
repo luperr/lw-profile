@@ -43,6 +43,8 @@ data "aws_iam_policy_document" "cloudflare_access" {
 }
 
 resource "aws_s3_bucket_policy" "s3BucketPolicy" {
+  depends_on = [aws_s3_bucket_public_access_block.s3BucketAccess]
+
   bucket = aws_s3_bucket.s3Bucket.id
   policy = data.aws_iam_policy_document.cloudflare_access.json
 }
