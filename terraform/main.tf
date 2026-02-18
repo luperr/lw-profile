@@ -107,6 +107,7 @@ resource "aws_iam_role" "github_actions" {
 
 data "aws_iam_policy_document" "github_s3_access" {
   statement {
+    sid = "SiteBucketAccess"
     actions = [
       "s3:GetObject",
       "s3:PutObject",
@@ -120,6 +121,21 @@ data "aws_iam_policy_document" "github_s3_access" {
       "${module.s3Dev.arn_s3_bucket}/*",
       module.s3Prod.arn_s3_bucket,
       "${module.s3Prod.arn_s3_bucket}/*",
+    ]
+  }
+
+  statement {
+    sid = "TerraformStateAccess"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject",
+      "s3:ListBucket",
+    ]
+
+    resources = [
+      "arn:aws:s3:::lw-profile-terraform-state",
+      "arn:aws:s3:::lw-profile-terraform-state/*",
     ]
   }
 }
