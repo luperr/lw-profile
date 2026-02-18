@@ -65,6 +65,12 @@ module "s3Prod" {
   cloudflare_ips        = local.cloudflare_ips
 }
 
+# Imports the manually created OIDC provider into Terraform state on first apply.
+import {
+  to = aws_iam_openid_connect_provider.github
+  id = "arn:aws:iam::855402793358:oidc-provider/token.actions.githubusercontent.com"
+}
+
 resource "aws_iam_openid_connect_provider" "github" {
   url             = "https://token.actions.githubusercontent.com"
   client_id_list  = ["sts.amazonaws.com"]
