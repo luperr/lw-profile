@@ -103,7 +103,6 @@ jobs:
         continue-on-error: true
 
       - name: Upload plan artifact
-        if: steps.plan.outputs.exitcode == '2'
         uses: actions/upload-artifact@v4
         with:
           name: tfplan
@@ -146,7 +145,7 @@ jobs:
     if: |
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
-      needs.plan.outputs.plan_exitcode == '2'
+      needs.plan.outputs.plan_exitcode != '1'
     environment:
       name: terraform-apply
       url: https://lachlannwhitehill.com
