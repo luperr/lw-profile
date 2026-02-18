@@ -50,11 +50,20 @@ The site automatically deploys when:
 
 CRITICAL PATH TO LIVE SITE
 --------------------------
-[ ] Update S3 bucket policy to allow Cloudflare IPs or public access
-[ ] Add public access block settings to prod terraform module
-[ ] Run terraform apply to create infrastructure
+[ ] Clean up AWS from failed Terraform runs:
+    - Delete S3 buckets: dev.lachlannwhitehill.com and lachlannwhitehill.com (empty first)
+    - Delete IAM role: github-actions-lw-profile (if partially created)
+    - Delete IAM inline policy: github-actions-s3-access (if partially created)
+[ ] Create Terraform state bucket manually in S3:
+    - Name: lw-profile-terraform-state, Region: ap-southeast-4
+    - Block all public access, enable versioning
+[ ] Update GitHubActionsDeployRole IAM policy to add TerraformState statement:
+    - s3:GetObject, PutObject, DeleteObject, ListBucket on lw-profile-terraform-state
+[ ] Run terraform apply to create infrastructure (buckets, OIDC, IAM role)
+[ ] Update AWS_ROLE_ARN secret to new github-actions-lw-profile role ARN
+[ ] Delete old GitHubActionsDeployRole once new role is working
 [ ] Deploy to production (merge to main)
-[ ] Verify site is live
+[ ] Verify site is live at https://lachlannwhitehill.com
 
 NOTES
 -----
