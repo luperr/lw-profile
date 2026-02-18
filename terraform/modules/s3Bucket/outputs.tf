@@ -13,7 +13,3 @@ output "website_bucket_id" {
 output "arn_s3_bucket" {
   value = aws_s3_bucket.s3Bucket.arn
 }
-
-output "account_id" {
-  value = local.account_id
-}

@@ -1,10 +1,61 @@
-name: Deploy Infrastructure (Terraform)
+name: Deploy
 
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
 
 env:
+  HUGO_VERSION: '0.152.2'
   TF_VERSION: '1.12.0'
 
 jobs:
+  build:
+    name: Build Hugo Site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: ${{ env.HUGO_VERSION }}
+          extended: true
+
+      - name: Determine environment
+        id: env
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+            echo "base_url=https://lachlannwhitehill.com" >> $GITHUB_OUTPUT
+          else
+            echo "environment=development" >> $GITHUB_OUTPUT
+            echo "base_url=https://dev.lachlannwhitehill.com" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build site
+        run: hugo --environment ${{ steps.env.outputs.environment }} --baseURL "${{ steps.env.outputs.base_url }}" --minify
+
+      - name: Check build output
+        run: |
+          [ -f "public/index.html" ] || { echo "ERROR: index.html not found"; exit 1; }
+          echo "Build successful: $(du -sh public | cut -f1) generated"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: hugo-site
+          path: public/
+          retention-days: 1
+
   plan:
     name: Terraform Plan
     runs-on: ubuntu-latest
@@ -72,7 +123,6 @@ jobs:
             const status = exitcode === '0' ? 'No changes'
               : exitcode === '2' ? 'Changes detected'
               : 'Plan failed';
-
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -83,7 +133,7 @@ jobs:
       - name: Plan result
         run: |
           case "${{ steps.plan.outputs.exitcode }}" in
-            0) echo "No infrastructure changes detected" ;;
+            0) echo "No infrastructure changes" ;;
             1) echo "Terraform plan failed"; exit 1 ;;
             2) echo "Infrastructure changes detected - apply requires approval" ;;
           esac
@@ -92,12 +142,10 @@ jobs:
     name: Terraform Apply
     needs: plan
     runs-on: ubuntu-latest
-    # Only apply on push to main (PR merge) when there are changes
     if: |
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
       needs.plan.outputs.plan_exitcode == '2'
-    # This environment requires manual approval in GitHub settings
     environment:
       name: terraform-apply
       url: https://lachlannwhitehill.com
@@ -133,7 +181,66 @@ jobs:
         run: terraform apply -auto-approve tfplan
         working-directory: ./terraform
 
-      - name: Apply summary
+  deploy:
+    name: Deploy Site
+    needs: [build, plan, apply]
+    runs-on: ubuntu-latest
+    # Run if build and plan succeeded, and apply either succeeded or was skipped (develop branch)
+    if: |
+      always() &&
+      needs.build.result == 'success' &&
+      needs.plan.result == 'success' &&
+      (needs.apply.result == 'success' || needs.apply.result == 'skipped') &&
+      github.event_name == 'push'
+    permissions:
+      id-token: write
+      contents: read
+    concurrency:
+      group: deploy-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - name: Determine environment
+        id: env
         run: |
-          echo "Infrastructure deployed successfully"
-          echo "Region: ${{ secrets.AWS_REGION }}"
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "s3_bucket=${{ secrets.S3_BUCKET_PROD }}" >> $GITHUB_OUTPUT
+            echo "base_url=https://lachlannwhitehill.com" >> $GITHUB_OUTPUT
+          else
+            echo "s3_bucket=${{ secrets.S3_BUCKET_DEV }}" >> $GITHUB_OUTPUT
+            echo "base_url=https://dev.lachlannwhitehill.com" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Verify S3 bucket access
+        run: |
+          aws sts get-caller-identity
+          aws s3 ls s3://${{ steps.env.outputs.s3_bucket }} || {
+            echo "ERROR: Cannot access bucket ${{ steps.env.outputs.s3_bucket }}"
+            exit 1
+          }
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: hugo-site
+          path: public/
+
+      - name: Deploy to S3
+        uses: reggionick/s3-deploy@v4
+        with:
+          folder: public
+          bucket: ${{ steps.env.outputs.s3_bucket }}
+          bucket-region: ${{ secrets.AWS_REGION }}
+          delete-removed: true
+          cache-control: 'public, max-age=31536000, immutable'
+          file-exclude: '*.html,*.xml,*.json'
+
+      - name: Deployment summary
+        run: |
+          echo "Site URL: ${{ steps.env.outputs.base_url }}"
+          echo "S3 Bucket: ${{ steps.env.outputs.s3_bucket }}"

@@ -1,6 +1,6 @@
 # lw-profile
 
-A personal blog/profile website built with Hugo, deployed to AWS S3, and managed with Terraform.
+A personal blog/profile website built with Hugo, deployed to AWS S3, and managed with Terraform. Automatically deployed with GitHub Actions.
 
 ## 📋 Overview
 
@@ -10,14 +10,6 @@ This is a static site generator project using:
 - **AWS S3** - Static website hosting
 - **Terraform** - Infrastructure as Code for AWS resources
 - **GitHub Actions** - CI/CD for automated deployment
-
-## Quick Start
-
-### Prerequisites
-
-- Docker Desktop (for macOS)
-- Terraform (if running locally)
-- Hugo Extended (if running locally)
 
 ### Running Locally with Docker
 
@@ -58,19 +50,9 @@ The site automatically deploys when:
 
 CRITICAL PATH TO LIVE SITE
 --------------------------
-[x] Get domain name ready (lachlannwhitehill.com)
-[x] Update hugo.toml baseURL to production domain
-[x] Fix robots.txt blocking in hugo.toml
-[x] Update GitHub Actions workflow for OIDC and branch-based deployment
-[ ] Setup AWS OIDC provider and IAM role in Terraform
 [ ] Update S3 bucket policy to allow Cloudflare IPs or public access
 [ ] Add public access block settings to prod terraform module
 [ ] Run terraform apply to create infrastructure
-[ ] Configure GitHub Actions secrets (AWS_ROLE_ARN, AWS_REGION, S3 buckets)
-[ ] Test deployment to dev
-[ ] Configure Cloudflare DNS CNAME to S3 endpoint
-[ ] Enable Cloudflare proxy (orange cloud)
-[ ] Set Cloudflare SSL to "Full"
 [ ] Deploy to production (merge to main)
 [ ] Verify site is live
 
