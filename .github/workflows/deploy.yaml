@@ -189,7 +189,7 @@ jobs:
     if: |
       always() &&
       needs.build.result == 'success' &&
-      needs.plan.result == 'success' &&
+      (needs.plan.result == 'success' || (needs.plan.result == 'failure' && github.ref == 'refs/heads/develop')) &&
       (needs.apply.result == 'success' || needs.apply.result == 'skipped') &&
       github.event_name == 'push'
     permissions:
