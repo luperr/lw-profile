@@ -115,6 +115,7 @@ data "aws_iam_policy_document" "github_s3_access" {
       "s3:ListBucket",
       "s3:GetBucketLocation",
       "s3:GetBucketPolicy",
+      "s3:GetBucketAcl",
     ]
 
     resources = [
@@ -129,9 +130,11 @@ data "aws_iam_policy_document" "github_s3_access" {
     sid = "TerraformIAMRead"
     actions = [
       "iam:GetOpenIDConnectProvider",
+      "iam:GetRole",
     ]
     resources = [
       "arn:aws:iam::855402793358:oidc-provider/token.actions.githubusercontent.com",
+      "arn:aws:iam::855402793358:role/github-actions-lw-profile",
     ]
   }
 
