@@ -231,14 +231,17 @@ jobs:
           path: public/
 
       - name: Deploy to S3
-        uses: reggionick/s3-deploy@v4
-        with:
-          folder: public
-          bucket: ${{ steps.env.outputs.s3_bucket }}
-          bucket-region: ${{ secrets.AWS_REGION }}
-          delete-removed: true
-          cache-control: 'public, max-age=31536000, immutable'
-          file-exclude: '*.html,*.xml,*.json'
+        run: |
+          # Deploy HTML, XML, JSON with no-cache so they're always fresh
+          aws s3 sync public/ s3://${{ steps.env.outputs.s3_bucket }}/ \
+            --delete \
+            --exclude "*" \
+            --include "*.html" --include "*.xml" --include "*.json" --include "*.txt" \
+            --cache-control "no-cache, no-store, must-revalidate"
+          # Deploy static assets with long-term cache (hashed filenames)
+          aws s3 sync public/ s3://${{ steps.env.outputs.s3_bucket }}/ \
+            --exclude "*.html" --exclude "*.xml" --exclude "*.json" --exclude "*.txt" \
+            --cache-control "public, max-age=31536000, immutable"
 
       - name: Deployment summary
         run: |
