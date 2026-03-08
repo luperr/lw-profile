@@ -47,12 +47,6 @@ The site automatically deploys when:
 - A PR to `main` is merged (production)
 - Pushes to non-main branches (staging)
 
-
-CRITICAL PATH TO LIVE SITE
-
-[ ] Update AWS_ROLE_ARN secret to new github-actions-lw-profile role ARN
-[ ] Delete old GitHubActionsDeployRole once new role is working
-
 NOTES
 -----
 - S3 bucket names must match the domain name exactly for Cloudflare proxying to work
@@ -64,7 +58,6 @@ NOTES
 
 OPTIONAL
 --------
-[ ] Add real content to about.md
 [ ] Create blog posts
 [ ] Add Cloudflare page rules for caching
 [ ] Implement Lambda for Cloudflare IP auto-updates
