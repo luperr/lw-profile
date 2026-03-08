@@ -6,9 +6,9 @@ enableRobotsTXT = true
 
 [languages]
   [languages.en]
-    title = 'Welcome'
+    title = 'Overly Engineered'
     [languages.en.params]
-      homeSubtitle = " to my little corner of the internet"
+      homeSubtitle = "a place to document the builds, breaks, and bad decisions"
     weight = 1
  
 languageCode = "en-us"

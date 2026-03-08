@@ -47,24 +47,6 @@ The site automatically deploys when:
 - A PR to `main` is merged (production)
 - Pushes to non-main branches (staging)
 
-
-CRITICAL PATH TO LIVE SITE
---------------------------
-[ ] Clean up AWS from failed Terraform runs:
-    - Delete S3 buckets: dev.lachlannwhitehill.com and lachlannwhitehill.com (empty first)
-    - Delete IAM role: github-actions-lw-profile (if partially created)
-    - Delete IAM inline policy: github-actions-s3-access (if partially created)
-[ ] Create Terraform state bucket manually in S3:
-    - Name: lw-profile-terraform-state, Region: ap-southeast-4
-    - Block all public access, enable versioning
-[ ] Update GitHubActionsDeployRole IAM policy to add TerraformState statement:
-    - s3:GetObject, PutObject, DeleteObject, ListBucket on lw-profile-terraform-state
-[ ] Run terraform apply to create infrastructure (buckets, OIDC, IAM role)
-[ ] Update AWS_ROLE_ARN secret to new github-actions-lw-profile role ARN
-[ ] Delete old GitHubActionsDeployRole once new role is working
-[ ] Deploy to production (merge to main)
-[ ] Verify site is live at https://lachlannwhitehill.com
-
 NOTES
 -----
 - S3 bucket names must match the domain name exactly for Cloudflare proxying to work
@@ -76,7 +58,6 @@ NOTES
 
 OPTIONAL
 --------
-[ ] Add real content to about.md
 [ ] Create blog posts
 [ ] Add Cloudflare page rules for caching
 [ ] Implement Lambda for Cloudflare IP auto-updates
