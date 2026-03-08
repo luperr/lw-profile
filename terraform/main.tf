@@ -114,6 +114,7 @@ data "aws_iam_policy_document" "github_s3_access" {
       "s3:DeleteObject",
       "s3:ListBucket",
       "s3:GetBucketLocation",
+      "s3:GetBucketPolicy",
     ]
 
     resources = [
@@ -121,6 +122,16 @@ data "aws_iam_policy_document" "github_s3_access" {
       "${module.s3Dev.arn_s3_bucket}/*",
       module.s3Prod.arn_s3_bucket,
       "${module.s3Prod.arn_s3_bucket}/*",
+    ]
+  }
+
+  statement {
+    sid = "TerraformIAMRead"
+    actions = [
+      "iam:GetOpenIDConnectProvider",
+    ]
+    resources = [
+      "arn:aws:iam::855402793358:oidc-provider/token.actions.githubusercontent.com",
     ]
   }
 
