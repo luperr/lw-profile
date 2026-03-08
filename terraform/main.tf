@@ -109,13 +109,28 @@ data "aws_iam_policy_document" "github_s3_access" {
   statement {
     sid = "SiteBucketAccess"
     actions = [
+      # Object operations
       "s3:GetObject",
       "s3:PutObject",
       "s3:DeleteObject",
+      # Bucket read operations needed by Terraform provider to refresh state
       "s3:ListBucket",
       "s3:GetBucketLocation",
-      "s3:GetBucketPolicy",
       "s3:GetBucketAcl",
+      "s3:GetBucketCORS",
+      "s3:GetBucketLogging",
+      "s3:GetBucketObjectLockConfiguration",
+      "s3:GetBucketOwnershipControls",
+      "s3:GetBucketPolicy",
+      "s3:GetBucketPublicAccessBlock",
+      "s3:GetBucketRequestPayment",
+      "s3:GetBucketTagging",
+      "s3:GetBucketVersioning",
+      "s3:GetBucketWebsite",
+      "s3:GetEncryptionConfiguration",
+      "s3:GetLifecycleConfiguration",
+      "s3:GetAccelerateConfiguration",
+      "s3:GetReplicationConfiguration",
     ]
 
     resources = [
@@ -131,6 +146,10 @@ data "aws_iam_policy_document" "github_s3_access" {
     actions = [
       "iam:GetOpenIDConnectProvider",
       "iam:GetRole",
+      "iam:GetRolePolicy",
+      "iam:ListRolePolicies",
+      "iam:ListAttachedRolePolicies",
+      "iam:ListInstanceProfilesForRole",
     ]
     resources = [
       "arn:aws:iam::855402793358:oidc-provider/token.actions.githubusercontent.com",
