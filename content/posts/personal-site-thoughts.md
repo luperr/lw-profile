@@ -1,6 +1,6 @@
 ---
 title: "I Over-Engineered My Personal Website (And I Regret Nothing)"
-slug : "test-dragon"
+slug : "overly-engineered-static-site"
 draft: false
 featuredImg: ""
 description : 'Summarising the things I made for my personal site/blog'
