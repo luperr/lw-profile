@@ -127,6 +127,9 @@ data "aws_iam_policy_document" "github_s3_access" {
       "s3:GetLifecycleConfiguration",
       "s3:GetAccelerateConfiguration",
       "s3:GetReplicationConfiguration",
+      "s3:PutEncryptionConfiguration",
+      "s3:PutBucketOwnershipControls",
+      "s3:PutBucketPublicAccessBlock",
     ]
 
     resources = [
