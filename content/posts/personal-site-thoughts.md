@@ -14,6 +14,8 @@ mathjax : false
 
 I wanted a demo project to showcase my DevOps skills. I didn't mind what was deployed, it could've been a single HTML page that says "hello world" and I'd have been happy. So I went for a static site (my now personal website) deployed in the most over-engineered way possible. Did I need to? Absolutely not. Here's what I built anyway.
 
+Read on for my philosophising or skip that and go straight to the repo: [github.com/luperr/lw-profile](https://github.com/luperr/lw-profile)
+
 ---
 
 ## The Stack

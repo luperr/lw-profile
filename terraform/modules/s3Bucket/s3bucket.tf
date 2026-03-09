@@ -10,15 +10,17 @@ resource "aws_s3_bucket" "s3Bucket" {
 resource "aws_s3_bucket_ownership_controls" "s3BucketOwnership" {
   bucket = aws_s3_bucket.s3Bucket.id
   rule {
-    object_ownership = var.s3BucketOwnership
+    object_ownership = "BucketOwnerEnforced"
   }
 }
 
-resource "aws_s3_bucket_acl" "s3BucketAcl" {
-  depends_on = [aws_s3_bucket_ownership_controls.s3BucketOwnership]
-
+resource "aws_s3_bucket_server_side_encryption_configuration" "s3BucketEncryption" {
   bucket = aws_s3_bucket.s3Bucket.id
-  acl    = var.s3BucketAcl
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
 }
 
 data "aws_iam_policy_document" "cloudflare_access" {
