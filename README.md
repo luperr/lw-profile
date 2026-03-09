@@ -50,13 +50,7 @@ The site automatically deploys when:
 NOTES
 -----
 - S3 bucket names must match the domain name exactly for Cloudflare proxying to work
-  without Workers or header rewrites. e.g.:
-    dev bucket:  dev.lachlannwhitehill.com
-    prod bucket: lachlannwhitehill.com
-- Cloudflare sends the domain as the Host header to S3. S3 uses the Host header
-  to identify the bucket, so names must match.
 
 OPTIONAL
 --------
-[ ] Add Cloudflare page rules for caching
 [ ] Implement Lambda for Cloudflare IP auto-updates

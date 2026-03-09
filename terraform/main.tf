@@ -130,6 +130,7 @@ data "aws_iam_policy_document" "github_s3_access" {
       "s3:PutEncryptionConfiguration",
       "s3:PutBucketOwnershipControls",
       "s3:PutBucketPublicAccessBlock",
+      "s3:PutBucketAcl",
     ]
 
     resources = [
