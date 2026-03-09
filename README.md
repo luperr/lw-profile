@@ -58,7 +58,5 @@ NOTES
 
 OPTIONAL
 --------
-[ ] Create blog posts
 [ ] Add Cloudflare page rules for caching
 [ ] Implement Lambda for Cloudflare IP auto-updates
-[ ] Add encryption to S3 buckets
