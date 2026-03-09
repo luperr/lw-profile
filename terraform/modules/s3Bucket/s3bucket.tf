@@ -10,8 +10,14 @@ resource "aws_s3_bucket" "s3Bucket" {
 resource "aws_s3_bucket_ownership_controls" "s3BucketOwnership" {
   bucket = aws_s3_bucket.s3Bucket.id
   rule {
-    object_ownership = "BucketOwnerEnforced"
+    object_ownership = "BucketOwnerPreferred"
   }
+}
+
+resource "aws_s3_bucket_acl" "s3BucketAcl" {
+  depends_on = [aws_s3_bucket_ownership_controls.s3BucketOwnership]
+  bucket     = aws_s3_bucket.s3Bucket.id
+  acl        = "private"
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "s3BucketEncryption" {
