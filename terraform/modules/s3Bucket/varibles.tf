@@ -13,16 +13,6 @@ variable "bucket_name" {
   description = "Bucket Name"
 }
 
-variable "s3BucketAcl" {
-  type = string
-  description = "ACLs, Public or Private"
-  default = "private"
-  validation {
-    condition = contains(["private", "public-read", "public-read-write", "aws-exec-read", "authenticated-read", "log-delivery-write"], var.s3BucketAcl)
-    error_message = "Valid value is one of the following: dev, prod, stag, qa"
-  }
-}
-
 variable "versioning" {
   type = string
   description = "Versioning status of s3 bucket"
@@ -52,16 +42,6 @@ variable "error_document_key" {
   type = string
   description = "Error key for static website hosting"
   default = "error.html"
-}
-
-variable "s3BucketOwnership" {
-  type = string
-  description = "Ownership of an S3 bucket"
-  default = "BucketOwnerPreferred"
-  validation {
-    condition = contains(["BucketOwnerPreferred", "ObjectWriter", "BucketOwnerEnforced"], var.s3BucketOwnership)
-    error_message = "Valid value is one of the following: BucketOwnerPreferred, ObjectWriter, BucketOwnerEnforced"
-  }
 }
 
 variable "s3BucketPolicyName" {

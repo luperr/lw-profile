@@ -34,15 +34,13 @@ module "s3Dev" {
 
   env                   = "dev"
   bucket_name           = "dev.lachlannwhitehill.com"
-  s3BucketAcl           = "public-read"
   force_destroy         = "true"
   index_document_key    = "index.html"
   error_document_key    = "error.html"
-  s3BucketOwnership     = "BucketOwnerPreferred"
   s3BucketPolicyName    = "dev-lw-profile-s3BucketPolicy"
-  blockPublicACLs       = "false"
+  blockPublicACLs       = "true"
   blockPublicPolicy     = "false"
-  ignorePublicACLs      = "false"
+  ignorePublicACLs      = "true"
   restrictPublicBuckets = "false"
   cloudflare_ips        = local.cloudflare_ips
 }
@@ -52,15 +50,13 @@ module "s3Prod" {
 
   env                   = "prod"
   bucket_name           = "lachlannwhitehill.com"
-  s3BucketAcl           = "public-read"
   force_destroy         = "true"
   index_document_key    = "index.html"
   error_document_key    = "error.html"
-  s3BucketOwnership     = "BucketOwnerPreferred"
   s3BucketPolicyName    = "prod-lw-profile-s3BucketPolicy"
-  blockPublicACLs       = "false"
+  blockPublicACLs       = "true"
   blockPublicPolicy     = "false"
-  ignorePublicACLs      = "false"
+  ignorePublicACLs      = "true"
   restrictPublicBuckets = "false"
   cloudflare_ips        = local.cloudflare_ips
 }
