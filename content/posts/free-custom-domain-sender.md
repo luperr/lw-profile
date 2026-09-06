@@ -24,7 +24,7 @@ I wanted to send emails from a custom domain without spending money or monitorin
 Cloudflare offers [email routing services](https://www.cloudflare.com/products/email-routing/) for domains using their DNS service.  The inbound service is free too, so this one was a no brainer.  Since DNS was already configured for me it took two minutes to configure.
 In the portal under **compute** -> **email services** click onboard a domain and select the domain you want as a sender.  
 Create a **destination address** and add your Gmail account here. (accept the verification email)
-Finally, add a **routing rule** with the new custom email address (eg *admin@domain.com*)
+Finally, add a **routing rule** with the new custom email address (eg admin@somedomain.com)
 
 We've now got inbound emails into our Gmail account. Bonus points, set up a rule in Gmail and you can easily seperate the emails out. 
 
