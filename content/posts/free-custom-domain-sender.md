@@ -1,5 +1,5 @@
 ---
-title: "Configuring A Custom Email Eending Domain For The Fiscally Responsible"
+title: "Configuring A Custom Email Sending Domain For The Fiscally Responsible"
 slug : "custom-email-sending-domain"
 draft: false
 featuredImg: ""
