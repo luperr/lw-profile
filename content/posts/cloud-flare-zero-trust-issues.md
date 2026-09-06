@@ -1,7 +1,7 @@
 ---
 title: "Cloudflare zero trust gotchas"
 slug : "zero-trust-issues"
-draft: false
+draft: true
 featuredImg: ""
 description : 'Issues and solutions for setting up zero-trust policies for self-hosted applications.'
 date: 2026-03-12
