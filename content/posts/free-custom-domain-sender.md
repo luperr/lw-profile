@@ -12,7 +12,7 @@ toc : false
 mathjax : false
 ---
 
-# Configuring custom email sending domain for the fiscally responsible
+# Configuring a custom email sending domain for the fiscally responsible
 I wanted to send emails from a custom domain without spending money or monitoring another mailbox. To avoid spending $5 a month for a paid email service or, even more foolishly, attempting to host my own email service. I strung together some config and a free service to emulate a custom email sending domain from my Gmail account.
 
 ## Pre-reqs
