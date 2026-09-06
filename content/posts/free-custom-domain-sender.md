@@ -3,7 +3,7 @@ title: "Configuring A Custom Email Eending Domain For The Fiscally Responsible"
 slug : "custom-email-sending-domain"
 draft: false
 featuredImg: ""
-description : "I didn't want to pay for emailer so I found a workaround"
+description : "I didn't want to pay for an email service provider so I found a workaround"
 date: 2026-09-06
 tags: 
     - project
