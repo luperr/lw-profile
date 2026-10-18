@@ -13,6 +13,8 @@ on:
 env:
   HUGO_VERSION: '0.152.2'
   TF_VERSION: '1.12.0'
+  # Bump to force the next deploy to rewrite every S3 object (e.g. after changing Cache-Control)
+  CACHE_POLICY_VERSION: '1'
 
 jobs:
   build:
@@ -231,19 +233,54 @@ jobs:
           path: public/
 
       - name: Deploy to S3
+        env:
+          BUCKET: ${{ steps.env.outputs.s3_bucket }}
         run: |
-          # Deploy HTML, XML, JSON with no-cache so they're always fresh
-          aws s3 sync public/ s3://${{ steps.env.outputs.s3_bucket }}/ \
-            --delete \
-            --exclude "*" \
-            --include "*.html" --include "*.xml" --include "*.json" --include "*.txt" \
-            --cache-control "no-cache, no-store, must-revalidate"
-          # Deploy static assets with long-term cache (hashed filenames)
-          aws s3 sync public/ s3://${{ steps.env.outputs.s3_bucket }}/ \
-            --exclude "*.html" --exclude "*.xml" --exclude "*.json" --exclude "*.txt" \
+          set -euo pipefail
+
+          # `aws s3 sync` skips objects it considers unchanged, so they keep their old
+          # Cache-Control. If the bucket's marker doesn't match CACHE_POLICY_VERSION,
+          # upload everything with `cp --recursive` instead. Bump it to force a rewrite.
+          deployed=$(aws s3 cp "s3://$BUCKET/.cache-policy-version" - 2>/dev/null || true)
+          echo "$CACHE_POLICY_VERSION" > public/.cache-policy-version
+          if [ "$deployed" = "$CACHE_POLICY_VERSION" ]; then
+            echo "Cache policy v$CACHE_POLICY_VERSION already deployed - incremental sync"
+            upload() { aws s3 sync public/ "s3://$BUCKET/" --delete "$@"; }
+          else
+            echo "Cache policy changed (${deployed:-none} -> $CACHE_POLICY_VERSION) - rewriting all objects"
+            upload() { aws s3 cp public/ "s3://$BUCKET/" --recursive "$@"; }
+          fi
+
+          # Hugo fingerprints CSS/JS with a sha256 (e.g. style.min.<64 hex>.css)
+          H=$(printf '[0-9a-f]%.0s' {1..64})
+
+          # Pass 1a: content-hashed assets - safe to cache forever
+          upload --exclude "*" --include "*.$H.css" --include "*.$H.js" \
             --cache-control "public, max-age=31536000, immutable"
+          # Pass 1b: other non-HTML (sitemap/RSS xml, robots.txt, images) - not hashed
+          upload --exclude "*.html" --exclude "*.$H.css" --exclude "*.$H.js" \
+            --cache-control "public, max-age=3600"
+          # Pass 2: HTML last, so it never references assets that aren't uploaded yet
+          upload --exclude "*" --include "*.html" \
+            --content-type "text/html; charset=utf-8" \
+            --cache-control "public, max-age=300, s-maxage=86400"
 
       - name: Deployment summary
         run: |
           echo "Site URL: ${{ steps.env.outputs.base_url }}"
           echo "S3 Bucket: ${{ steps.env.outputs.s3_bucket }}"
+
+      - name: Purge Cloudflare cache
+        # purge_everything clears the whole zone, which dev shares with prod - only purge on prod deploys
+        if: github.ref == 'refs/heads/main'
+        env:
+          CF_ZONE_ID: ${{ secrets.CF_ZONE_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          : "${CF_ZONE_ID:?CF_ZONE_ID secret not set}" "${CF_API_TOKEN:?CF_API_TOKEN secret not set}"
+          curl -sS --fail-with-body -X POST \
+            "https://api.cloudflare.com/client/v4/zones/$CF_ZONE_ID/purge_cache" \
+            -H "Authorization: Bearer $CF_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}' | tee /dev/stderr | jq -e '.success' > /dev/null
