@@ -71,3 +71,8 @@ Vibe coding an app is totally doable. I can see why people get sucked in. I am u
 I didn't learn much TypeScript as I initially planned but I learnt more about the things I was already comfortable with: All the infra stuff is solid AF. I should have seen that coming. I was surprised and have come to build an appreciation for the full suit of tooling that I only get a chance to lightly touch in my day job. I also really valued the experience of starting from scratch, making real impactful decisions on best in class vs best for right now.
 
 I have a working project that people use and I can slowly chip away at and learn more. Going forward I want to treat this more as a proper product and see what I can do to make it a viable and robust tool.
+
+# The links
+
+[Go checkout Scrymarket for yourself](https://scrymarket.au)
+[Review all the code too.](https://github.com/luperr/mtg-au-tracker)
