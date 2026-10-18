@@ -62,7 +62,7 @@ So much of my original plan for Scrymarket didn't eventuate as planned, here's h
     
 - Users can generate issues and feedback automatically via a form that maps to GitHub issues.  I’m really happy with keeping the tool chain down to a minimum and not having a CRM style tool to manage as well.
     
-- I made a really dumb method for free emails from my domain without having to pay or host an outbound mail server, you can read about it here.
+- I made a really dumb method for free emails from my domain without having to pay or host an outbound mail server, [you can read about it here]({{< relref "posts/free-custom-domain-sender.md" >}}).
     
 - I added affiliate links for eBay, because it is easy to apply for and I wondered if it would produce the funding needed to migrate to a cloud hosted solution. The jury is still out on this one.
     
