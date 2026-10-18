@@ -74,5 +74,5 @@ I have a working project that people use and I can slowly chip away at and learn
 
 # The links
 
-[Go checkout Scrymarket for yourself](https://scrymarket.au)
-[Review all the code too.](https://github.com/luperr/mtg-au-tracker)
+- [Go checkout Scrymarket for yourself.](https://scrymarket.au)
+- [Review all the code too.](https://github.com/luperr/mtg-au-tracker)
